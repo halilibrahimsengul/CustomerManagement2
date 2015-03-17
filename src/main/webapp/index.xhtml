@@ -1,0 +1,120 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<script name="jquery/jquery.js" library="primefaces"></script>
+</h:head>
+<f:view>
+	<h:form id="form2">
+		<p:commandButton value="New User"
+			actionListener="#{registrationManagedBean.createNewUser}"
+			update=":form2:newusertable" icon="ui-icon-plus"
+			oncomplete="PF('dialognewuser').show();" />
+		<p:dialog id="dialog2" modal="false" header="New User"
+			widgetVar="dialognewuser" height="210" width="420" ajax="true">
+			<h:panelGrid columns="2" id="newusertable">
+				<h:outputText value="User Name:" />
+				<p:inputText id="name2" value="#{registrationManagedBean.user.name}" />
+				<h:outputText value="User Surname:" />
+				<p:inputText id="surName2"
+					value="#{registrationManagedBean.user.surName}" />
+				<h:outputText value="User Phone Number:" />
+				<p:inputMask id="phone2"
+					value="#{registrationManagedBean.user.phoneNumber}"
+					mask="(999) 999-9999" />
+			</h:panelGrid>
+			<p:commandButton value="Save" icon="ui-icon-disk"
+				onclick="PF('dialognewuser').hide()"
+				oncomplete="PF('dialognewuserc').show()" />
+			<p:commandButton value="Cancel" onclick="PF('dialognewuser').hide();"
+				icon="ui-icon-cancel" />
+
+		</p:dialog>
+	</h:form>
+	<h:form id="formc">
+		<p:dialog id="dialogC" modal="false" header="New User"
+			widgetVar="dialognewuserc" height="210" width="420" ajax="true">
+			<p:captcha label="Captcha" />
+			<p:commandButton value="Save"
+				actionListener="#{registrationManagedBean.register}"
+				update=":form:dataTable,:form:messages,:form2:newusertable"
+				icon="ui-icon-disk" onclick="PF('dialognewuser').hide()"
+				oncomplete="Recaptcha.reload()" />
+		</p:dialog>
+	</h:form>
+
+	<h:form id="form">
+		<p:messages id="messages" showDetail="true" />
+
+
+		<p:dialog id="dialog1" modal="false" header="Update User"
+			widgetVar="dialoguser" height="500" width="600" ajax="true">
+			<h:panelGrid columns="3" id="usertable">
+				<h:outputText value="User Name:" />
+				<p:inputText id="name" value="#{registrationManagedBean.user.name}"
+					label="Name" />
+				<p:message for="name" />
+				<h:outputText value="User Surname:" />
+				<p:inputText id="surName"
+					value="#{registrationManagedBean.user.surName}"></p:inputText>
+				<p:message for="surName" />
+				<h:outputText value="User Phone Number:" />
+				<p:inputMask id="phone"
+					value="#{registrationManagedBean.user.phoneNumber}"
+					mask="(999) 999-9999" />
+				<p:message for="phone" />
+			</h:panelGrid>
+
+			<p:commandButton value="Save"
+				actionListener="#{registrationManagedBean.register}"
+				update=":form:messages,dataTable,usertable" icon="ui-icon-disk"
+				onclick="PF('dialoguser').hide()" />
+			<p:commandButton value="Cancel" onclick="PF('dialoguser').hide();"
+				icon="ui-icon-cancel" />
+		</p:dialog>
+
+		<p:separator />
+		<h:panelGrid columns="1">
+			<p:dataTable id="dataTable" value="#{registrationManagedBean.users}"
+				var="u">
+
+				<p:ajax event="rowSelect"
+					listener="#{registrationManagedBean.onRowSelect}"
+					oncomplete="PF('dialoguser').show()" />
+
+				<p:column headerText="User's Name">
+					<h:outputText value="#{u.name}" />
+				</p:column>
+				<p:column headerText="User's Surname">
+					<h:outputText value="#{u.surName}" />
+				</p:column>
+				<p:column headerText="User's Phone Number">
+					<h:outputText value="#{u.phoneNumber}" />
+				</p:column>
+				<p:column>
+					<p:commandButton value="Update" icon="ui-icon-disk"
+						action="#{registrationManagedBean.update(u)}"
+						onclick="PF('dialoguser').show();" update=":form:usertable">
+					</p:commandButton>
+				</p:column>
+				<p:column>
+					<p:commandButton value="Delete" icon="ui-icon-trash"
+						action="#{registrationManagedBean.delete(u)}" update="@form">
+						<p:confirm header="Confirmation" message="Are you sure?"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:confirmDialog global="true" showEffect="fade"
+						hideEffect="explode">
+						<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:column>
+			</p:dataTable>
+		</h:panelGrid>
+	</h:form>
+</f:view>
+</html>
